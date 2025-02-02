@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "compatibilityLevel": "JAVA_17",
+  "package": "com.mrbysco.headlight.mixin",
+  "refmap": "headlight.refmap.json",
+  "target": "@env(DEFAULT)",
+  "client": [
+    "light.ClientMixin",
+    "light.EntityRendererMixin",
+    "light.LevelRendererMixin",
+    "light.LightEntityMixin"
+  ]
+}
