@@ -26,7 +26,6 @@ public class LightItemTagsProvider extends ItemTagsProvider {
 				Items.TORCH,
 				Items.SOUL_TORCH,
 				Items.REDSTONE_TORCH,
-				Items.REDSTONE_LAMP,
 				Items.LANTERN,
 				Items.SOUL_LANTERN,
 				Items.SEA_LANTERN,
