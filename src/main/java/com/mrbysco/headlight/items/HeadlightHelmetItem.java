@@ -3,6 +3,7 @@ package com.mrbysco.headlight.items;
 import com.mrbysco.headlight.HeadlightMod;
 import com.mrbysco.headlight.client.ClientHandler;
 import com.mrbysco.headlight.client.model.HeadlightModel;
+import com.mrbysco.headlight.light.LightManager;
 import com.mrbysco.headlight.menu.HeadlightMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -68,7 +69,7 @@ public class HeadlightHelmetItem extends ArmorItem {
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		return new HeadlightHelmetItem.InventoryProvider();
+		return new HeadlightHelmetItem.InventoryProvider(stack);
 	}
 
 	private static class InventoryProvider implements ICapabilitySerializable<CompoundTag> {
@@ -82,7 +83,33 @@ public class HeadlightHelmetItem extends ArmorItem {
 			public int getSlotLimit(int slot) {
 				return 1;
 			}
+
+			@Override
+			protected void onContentsChanged(int slot) {
+				super.onContentsChanged(slot);
+				ItemStack lightStack = getStackInSlot(slot);
+				CompoundTag tag = lightStack.getOrCreateTag();
+				if (lightStack.isEmpty()) {
+					tag.remove("headlight_level");
+				} else {
+					int lightLevel = LightManager.getValue(lightStack.getItem());
+					if (lightLevel > 0)
+						tag.putInt("headlight_level", lightLevel);
+					else
+						tag.remove("headlight_level");
+				}
+				if(tag.isEmpty())
+					headlight.setTag(null);
+				else
+					headlight.setTag(tag);
+			}
 		});
+
+		private final ItemStack headlight;
+
+		public InventoryProvider(ItemStack stack) {
+			this.headlight = stack;
+		}
 
 		@NotNull
 		@Override

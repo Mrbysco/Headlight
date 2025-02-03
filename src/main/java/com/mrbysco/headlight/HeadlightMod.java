@@ -26,6 +26,7 @@ public class HeadlightMod {
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	public static final TagKey<Item> LIGHTS = ItemTags.create(modLoc("lights"));
+	public static final TagKey<Item> HEADLIGHT_HELMETS = ItemTags.create(modLoc("headlight_helmets"));
 
 	public HeadlightMod() {
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();

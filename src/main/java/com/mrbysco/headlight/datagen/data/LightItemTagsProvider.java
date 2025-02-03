@@ -1,6 +1,7 @@
 package com.mrbysco.headlight.datagen.data;
 
 import com.mrbysco.headlight.HeadlightMod;
+import com.mrbysco.headlight.registry.LightRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -20,6 +21,7 @@ public class LightItemTagsProvider extends ItemTagsProvider {
 
 	@Override
 	protected void addTags(@NotNull HolderLookup.Provider provider) {
+		this.tag(HeadlightMod.HEADLIGHT_HELMETS).add(LightRegistry.HEADLIGHT.get());
 		this.tag(HeadlightMod.LIGHTS).add(
 				Items.TORCH,
 				Items.SOUL_TORCH,
