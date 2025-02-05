@@ -76,7 +76,7 @@ public class HeadlightMenu extends AbstractContainerMenu {
 	public ItemStack quickMoveStack(@NotNull Player player, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
 
-		if (index <= 8) {
+		if (index <= 1) {
 			Slot slot = slots.get(index);
 
 			if (slot != null && slot.hasItem()) {
