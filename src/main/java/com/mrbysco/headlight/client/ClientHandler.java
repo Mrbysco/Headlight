@@ -11,12 +11,14 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class ClientHandler {
 	public static final ModelLayerLocation HEADLIGHT = new ModelLayerLocation(HeadlightMod.modLoc("headlight"), "main");
+	public static final ModelLayerLocation HEADLIGHT_ADDON = new ModelLayerLocation(HeadlightMod.modLoc("headlight"), "addon");
 
 	public static void onClientSetup(final FMLClientSetupEvent event) {
 		MenuScreens.register(LightMenus.HEADLIGHT.get(), HeadlightScreen::new);
 	}
 
 	public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-		event.registerLayerDefinition(HEADLIGHT, HeadlightModel::createArmorDefinition);
+		event.registerLayerDefinition(HEADLIGHT, HeadlightModel::createHeadlightLayer);
+		event.registerLayerDefinition(HEADLIGHT_ADDON, HeadlightModel::createHeadlightLayer);
 	}
 }
