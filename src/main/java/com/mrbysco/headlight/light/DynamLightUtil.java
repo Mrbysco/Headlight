@@ -1,6 +1,7 @@
 package com.mrbysco.headlight.light;
 
 import com.mrbysco.headlight.HeadlightMod;
+import com.mrbysco.headlight.Reference;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -23,7 +24,7 @@ public class DynamLightUtil {
 			ItemStack headStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
 			CompoundTag nbt = headStack.getTag();
 			if (nbt != null && headStack.is(HeadlightMod.HEADLIGHT_HELMETS)) {
-				return nbt.getInt("headlight_level") > 0;
+				return nbt.getInt(Reference.LEVEL_TAG) > 0;
 			}
 		}
 		return false;
@@ -34,7 +35,7 @@ public class DynamLightUtil {
 			ItemStack headStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
 			CompoundTag nbt = headStack.getTag();
 			if (nbt != null && headStack.is(HeadlightMod.HEADLIGHT_HELMETS)) {
-				return nbt.getInt("headlight_level");
+				return nbt.getInt(Reference.LEVEL_TAG);
 			}
 		}
 		return 0;

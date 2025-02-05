@@ -1,8 +1,10 @@
 package com.mrbysco.headlight.items;
 
 import com.mrbysco.headlight.HeadlightMod;
+import com.mrbysco.headlight.Reference;
 import com.mrbysco.headlight.client.ClientHandler;
 import com.mrbysco.headlight.client.model.HeadlightModel;
+import com.mrbysco.headlight.client.renderer.HeadlightRenderer;
 import com.mrbysco.headlight.light.LightManager;
 import com.mrbysco.headlight.menu.HeadlightMenu;
 import net.minecraft.ChatFormatting;
@@ -12,6 +14,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -34,6 +37,7 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,15 +94,22 @@ public class HeadlightHelmetItem extends ArmorItem {
 				ItemStack lightStack = getStackInSlot(slot);
 				CompoundTag tag = lightStack.getOrCreateTag();
 				if (lightStack.isEmpty()) {
-					tag.remove("headlight_level");
+					tag.remove(Reference.LEVEL_TAG);
+					tag.remove(Reference.SOURCE_TAG);
 				} else {
 					int lightLevel = LightManager.getValue(lightStack.getItem());
 					if (lightLevel > 0)
-						tag.putInt("headlight_level", lightLevel);
+						tag.putInt(Reference.LEVEL_TAG, lightLevel);
 					else
-						tag.remove("headlight_level");
+						tag.remove(Reference.LEVEL_TAG);
+
+					ResourceLocation itemID = ForgeRegistries.ITEMS.getKey(lightStack.getItem());
+					if (itemID != null)
+						tag.putString(Reference.SOURCE_TAG, itemID.toString());
+					else
+						tag.remove(Reference.SOURCE_TAG);
 				}
-				if(tag.isEmpty())
+				if (tag.isEmpty())
 					headlight.setTag(null);
 				else
 					headlight.setTag(tag);
@@ -138,14 +149,17 @@ public class HeadlightHelmetItem extends ArmorItem {
 		consumer.accept(new IClientItemExtensions() {
 			private final LazyLoadedValue<HeadlightModel> model = new LazyLoadedValue<>(this::provideHeadlightModel);
 
-			public HeadlightModel provideHeadlightModel() {
-				return new HeadlightModel(Minecraft.getInstance().getEntityModels().bakeLayer(ClientHandler.HEADLIGHT));
+			public HeadlightModel<?> provideHeadlightModel() {
+				return new HeadlightModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ClientHandler.HEADLIGHT));
 			}
 
 			@NotNull
 			@Override
 			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
-				return model.get();
+				ItemStack source = HeadlightRenderer.INSTANCE.getSourceItem(itemStack);
+				var helmetModel = model.get();
+				helmetModel.setSourceStack(source);
+				return helmetModel;
 			}
 		});
 	}
