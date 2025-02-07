@@ -309,7 +309,7 @@ public class LightManager {
 	 * @param lightSource the light source
 	 */
 	public static void updateTracking(@NotNull LambDynamicLight lightSource) {
-		boolean enabled = lightSource.isDynamicLightEnabled();
+		boolean enabled = lightSource.headlight$isDynamicLightEnabled();
 		int luminance = lightSource.headlight$getLuminance();
 		if (!enabled && luminance > 0) {
 			lightSource.headlight$setDynamicLightEnabled(true);
