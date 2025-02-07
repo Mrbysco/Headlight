@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(EntityRenderer.class)
+@Mixin(value = EntityRenderer.class, priority = 999)
 public class EntityRendererMixin<T extends Entity> {
 
 	@Inject(method = "getBlockLightLevel", at = @At("RETURN"), cancellable = true)
@@ -25,6 +25,8 @@ public class EntityRendererMixin<T extends Entity> {
 
 		int posLuminance = (int) LightManager.getDynamicLightLevel(pos);
 
-		cir.setReturnValue(Math.max(Math.max(vanilla, entityLuminance), posLuminance));
+		int newValue = Math.max(Math.max(vanilla, entityLuminance), posLuminance);
+		if (newValue > vanilla)
+			cir.setReturnValue(newValue);
 	}
 }
