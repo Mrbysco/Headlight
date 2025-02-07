@@ -47,7 +47,7 @@ public interface LambDynamicLight {
 	 *
 	 * @return {@code true} if the dynamic light is enabled, else {@code false}
 	 */
-	default boolean isDynamicLightEnabled() {
+	default boolean headlight$isDynamicLightEnabled() {
 		return LightManager.containsLightSource(this);
 	}
 
