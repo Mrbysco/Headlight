@@ -10,14 +10,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import org.slf4j.Logger;
 
 @Mod(HeadlightMod.MOD_ID)
@@ -28,21 +26,22 @@ public class HeadlightMod {
 	public static final TagKey<Item> LIGHTS = ItemTags.create(modLoc("lights"));
 	public static final TagKey<Item> HEADLIGHT_HELMETS = ItemTags.create(modLoc("headlight_helmets"));
 
-	public HeadlightMod() {
-		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+	public HeadlightMod(IEventBus eventBus, Dist dist) {
+		eventBus.addListener(LightRegistry::registerCapabilities);
 
+		LightRegistry.DATA_COMPONENT_TYPES.register(eventBus);
 		LightRegistry.BLOCKS.register(eventBus);
 		LightRegistry.ITEMS.register(eventBus);
 		LightRegistry.CREATIVE_MODE_TABS.register(eventBus);
 		LightMenus.MENU_TYPES.register(eventBus);
 
-		MinecraftForge.EVENT_BUS.register(this);
+		NeoForge.EVENT_BUS.register(this);
 
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-			eventBus.addListener(ClientHandler::onClientSetup);
+		if (dist.isClient()) {
+			eventBus.addListener(ClientHandler::registerMenuScreens);
 			eventBus.addListener(ClientHandler::registerLayerDefinitions);
-			MinecraftForge.EVENT_BUS.register(ClientEventHandler.class);
-		});
+			NeoForge.EVENT_BUS.register(ClientEventHandler.class);
+		}
 	}
 
 	@SubscribeEvent
@@ -51,6 +50,6 @@ public class HeadlightMod {
 	}
 
 	public static ResourceLocation modLoc(String path) {
-		return new ResourceLocation(MOD_ID, path);
+		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 }

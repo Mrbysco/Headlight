@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+loaderVersion="[4,)"
 issueTrackerURL="https://github.com/Mrbysco/Headlight/issues"
 license="MIT"
 
@@ -15,7 +15,17 @@ Adds a helmet that stores a light source, keeping the darkness away while you ex
 
 [[dependencies.headlight]]
 modId="minecraft"
-mandatory=true
-versionRange="[1.20,1.21)"
+type="required"
+versionRange="[1.21,1.22)"
 ordering="NONE"
 side="BOTH"
+[[dependencies.headlight]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.1,)"
+ordering="NONE"
+side="BOTH"
+[[mixins]]
+config="headlight.mixins.json"
+[[mixins]]
+config="compat.headlight.mixins.json"

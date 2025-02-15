@@ -94,16 +94,15 @@ public class HeadlightModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, @NotNull VertexConsumer vertexConsumer,
-	                           int packedLight, int packedOverlay,
-	                           float red, float green, float blue, float alpha) {
+	                           int packedLight, int packedOverlay, int color) {
 		poseStack.pushPose();
 		poseStack.scale(1.15F, 1.15F, 1.15F);
 		if (!isAddon) {
 			this.helmet.copyFrom(this.head);
-			helmet.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+			helmet.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
 		}
 		this.addon.copyFrom(this.head);
-		addon.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+		addon.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
 		poseStack.popPose();
 		if (!sourceStack.isEmpty()) {
 			ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();

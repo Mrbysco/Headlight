@@ -47,25 +47,23 @@ public abstract class LightEntityMixin implements LambDynamicLight {
 	private ChunkPos chunkPosition;
 
 	@Unique
-	protected int lambdynlights$luminance = 0;
+	protected int headlight$luminance = 0;
 	@Unique
-	private int lambdynlights$lastLuminance = 0;
+	private int headlight$lastLuminance = 0;
 	@Unique
-	private long lambdynlights$lastUpdate = 0;
+	private double headlight$prevX;
 	@Unique
-	private double lambdynlights$prevX;
+	private double headlight$prevY;
 	@Unique
-	private double lambdynlights$prevY;
+	private double headlight$prevZ;
 	@Unique
-	private double lambdynlights$prevZ;
-	@Unique
-	private LongOpenHashSet lambdynlights$trackedLitChunkPos = new LongOpenHashSet();
+	private LongOpenHashSet headlight$trackedLitChunkPos = new LongOpenHashSet();
 
 	@Inject(method = "tick", at = @At("TAIL"))
 	public void onTick(CallbackInfo ci) {
 		// We do not want to update the entity on the server.
 		if (level.isClientSide && !LightManager.shouldUpdateDynamicLight()) {
-			lambdynlights$luminance = 0;
+			headlight$luminance = 0;
 		}
 		if (this.level.isClientSide() && LightManager.shouldUpdateDynamicLight()) {
 			if (this.isRemoved()) {
@@ -113,7 +111,7 @@ public abstract class LightEntityMixin implements LambDynamicLight {
 
 	@Override
 	public void headlight$resetDynamicLight() {
-		this.lambdynlights$lastLuminance = 0;
+		this.headlight$lastLuminance = 0;
 	}
 
 	@SuppressWarnings("ConstantValue")
@@ -124,32 +122,32 @@ public abstract class LightEntityMixin implements LambDynamicLight {
 
 	@Override
 	public void headlight$dynamicLightTick() {
-		lambdynlights$luminance = 0;
+		headlight$luminance = 0;
 		int luminance = DynamLightUtil.lightForEntity((Entity) (Object) this);
-		if (luminance > this.lambdynlights$luminance)
-			this.lambdynlights$luminance = luminance;
+		if (luminance > this.headlight$luminance)
+			this.headlight$luminance = luminance;
 	}
 
 	@Override
 	public int headlight$getLuminance() {
-		return this.lambdynlights$luminance;
+		return this.headlight$luminance;
 	}
 
 	@Override
 	public boolean headlight$updateDynamicLight(LevelRenderer renderer) {
 		if (!this.headlight$shouldUpdateDynamicLight())
 			return false;
-		double deltaX = this.getX() - this.lambdynlights$prevX;
-		double deltaY = this.getY() - this.lambdynlights$prevY;
-		double deltaZ = this.getZ() - this.lambdynlights$prevZ;
+		double deltaX = this.getX() - this.headlight$prevX;
+		double deltaY = this.getY() - this.headlight$prevY;
+		double deltaZ = this.getZ() - this.headlight$prevZ;
 
 		int luminance = this.headlight$getLuminance();
 
-		if (Math.abs(deltaX) > 0.1D || Math.abs(deltaY) > 0.1D || Math.abs(deltaZ) > 0.1D || luminance != this.lambdynlights$lastLuminance) {
-			this.lambdynlights$prevX = this.getX();
-			this.lambdynlights$prevY = this.getY();
-			this.lambdynlights$prevZ = this.getZ();
-			this.lambdynlights$lastLuminance = luminance;
+		if (Math.abs(deltaX) > 0.1D || Math.abs(deltaY) > 0.1D || Math.abs(deltaZ) > 0.1D || luminance != this.headlight$lastLuminance) {
+			this.headlight$prevX = this.getX();
+			this.headlight$prevY = this.getY();
+			this.headlight$prevZ = this.getZ();
+			this.headlight$lastLuminance = luminance;
 
 			var newPos = new LongOpenHashSet();
 
@@ -158,7 +156,7 @@ public abstract class LightEntityMixin implements LambDynamicLight {
 				var chunkPos = new BlockPos.MutableBlockPos(entityChunkPos.x, DynamLightUtil.getSectionCoord(this.getEyeY()), entityChunkPos.z);
 
 				LightManager.scheduleChunkRebuild(renderer, chunkPos);
-				LightManager.updateTrackedChunks(chunkPos, this.lambdynlights$trackedLitChunkPos, newPos);
+				LightManager.updateTrackedChunks(chunkPos, this.headlight$trackedLitChunkPos, newPos);
 
 				var directionX = (this.blockPosition().getX() & 15) >= 8 ? Direction.EAST : Direction.WEST;
 				var directionY = (Mth.floor(this.getEyeY()) & 15) >= 8 ? Direction.UP : Direction.DOWN;
@@ -176,13 +174,13 @@ public abstract class LightEntityMixin implements LambDynamicLight {
 						chunkPos.move(directionY); // Y
 					}
 					LightManager.scheduleChunkRebuild(renderer, chunkPos);
-					LightManager.updateTrackedChunks(chunkPos, this.lambdynlights$trackedLitChunkPos, newPos);
+					LightManager.updateTrackedChunks(chunkPos, this.headlight$trackedLitChunkPos, newPos);
 				}
 			}
 			// Schedules the rebuild of removed chunks.
 			this.headlight$scheduleTrackedChunksRebuild(renderer);
 			// Update tracked lit chunks.
-			this.lambdynlights$trackedLitChunkPos = newPos;
+			this.headlight$trackedLitChunkPos = newPos;
 			return true;
 		}
 		return false;
@@ -191,7 +189,7 @@ public abstract class LightEntityMixin implements LambDynamicLight {
 	@Override
 	public void headlight$scheduleTrackedChunksRebuild(LevelRenderer renderer) {
 		if (Minecraft.getInstance().level == this.level)
-			for (long pos : this.lambdynlights$trackedLitChunkPos) {
+			for (long pos : this.headlight$trackedLitChunkPos) {
 				LightManager.scheduleChunkRebuild(renderer, pos);
 			}
 	}

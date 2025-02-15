@@ -3,7 +3,6 @@
   "minVersion": "0.8.5",
   "compatibilityLevel": "JAVA_17",
   "package": "com.mrbysco.headlight.mixin.compat",
-  "refmap": "headlight.refmap.json",
   "plugin": "com.mrbysco.headlight.mixin.compat.HeadlightMixinPlugin",
   "target": "@env(DEFAULT)",
   "client": [

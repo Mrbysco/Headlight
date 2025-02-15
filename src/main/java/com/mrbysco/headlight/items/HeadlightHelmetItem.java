@@ -1,17 +1,18 @@
 package com.mrbysco.headlight.items;
 
 import com.mrbysco.headlight.HeadlightMod;
-import com.mrbysco.headlight.Reference;
 import com.mrbysco.headlight.client.ClientHandler;
 import com.mrbysco.headlight.client.model.HeadlightModel;
 import com.mrbysco.headlight.client.renderer.HeadlightRenderer;
 import com.mrbysco.headlight.light.LightManager;
 import com.mrbysco.headlight.menu.HeadlightMenu;
+import com.mrbysco.headlight.registry.LightRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -27,33 +28,30 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ArmorMaterial.Layer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.items.ComponentItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
+@SuppressWarnings("deprecation")
 public class HeadlightHelmetItem extends ArmorItem {
 
-	public HeadlightHelmetItem(ArmorMaterial material, Properties properties) {
-		super(material, Type.HELMET, properties);
+	public HeadlightHelmetItem(Holder<ArmorMaterial> materialHolder, Properties properties) {
+		super(materialHolder, Type.HELMET, properties.durability(ArmorItem.Type.HELMET.getDurability(15)));
 	}
 
 	@NotNull
 	@Override
 	public InteractionResultHolder<ItemStack> use(@NotNull Level level, Player playerIn, @NotNull InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		IItemHandler handler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+		IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 		if (handler != null && !playerIn.isShiftKeyDown()) {
 			playerIn.openMenu(this.getContainer(stack));
 			return new InteractionResultHolder<>(InteractionResult.PASS, stack);
@@ -65,89 +63,44 @@ public class HeadlightHelmetItem extends ArmorItem {
 	@Nullable
 	public MenuProvider getContainer(ItemStack stack) {
 		return new SimpleMenuProvider((id, inventory, player) ->
-				new HeadlightMenu(id, inventory, stack), stack.hasCustomHoverName() ?
+				new HeadlightMenu(id, inventory, stack), stack.has(DataComponents.CUSTOM_NAME) ?
 				((MutableComponent) stack.getHoverName()).withStyle(ChatFormatting.BLACK) :
 				Component.translatable(HeadlightMod.MOD_ID + ".container.headlight"));
 	}
 
-	@Nullable
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		return new HeadlightHelmetItem.InventoryProvider(stack);
-	}
+	public static class LightInventory extends ComponentItemHandler {
+		public LightInventory(ItemStack stack) {
+			super(stack, LightRegistry.HEADLIGHT_CONTENTS.get(), 1);
+		}
 
-	private static class InventoryProvider implements ICapabilitySerializable<CompoundTag> {
-		private final LazyOptional<ItemStackHandler> inventory = LazyOptional.of(() -> new ItemStackHandler(1) {
-			@Override
-			public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-				return stack.is(HeadlightMod.LIGHTS) && super.isItemValid(slot, stack);
-			}
-
-			@Override
-			public int getSlotLimit(int slot) {
-				return 1;
-			}
-
-			@Override
-			protected void onContentsChanged(int slot) {
-				super.onContentsChanged(slot);
-				ItemStack lightStack = getStackInSlot(slot);
-				CompoundTag tag = lightStack.getOrCreateTag();
-				if (lightStack.isEmpty()) {
-					tag.remove(Reference.LEVEL_TAG);
-					tag.remove(Reference.SOURCE_TAG);
-				} else {
-					int lightLevel = LightManager.getValue(lightStack.getItem());
-					if (lightLevel > 0)
-						tag.putInt(Reference.LEVEL_TAG, lightLevel);
-					else
-						tag.remove(Reference.LEVEL_TAG);
-
-					ResourceLocation itemID = ForgeRegistries.ITEMS.getKey(lightStack.getItem());
-					if (itemID != null)
-						tag.putString(Reference.SOURCE_TAG, itemID.toString());
-					else
-						tag.remove(Reference.SOURCE_TAG);
-				}
-				if (tag.isEmpty())
-					headlight.setTag(null);
+		@Override
+		protected void onContentsChanged(int slot, ItemStack oldStack, ItemStack newStack) {
+			super.onContentsChanged(slot, oldStack, newStack);
+			ItemStack lightStack = getStackInSlot(slot);
+			if (lightStack.isEmpty()) {
+				parent.remove(LightRegistry.LIGHT_SOURCE);
+				parent.remove(LightRegistry.LIGHT_LEVEL);
+			} else {
+				int lightLevel = LightManager.getValue(lightStack.getItem());
+				if (lightLevel > 0)
+					parent.set(LightRegistry.LIGHT_LEVEL, lightLevel);
 				else
-					headlight.setTag(tag);
+					parent.remove(LightRegistry.LIGHT_LEVEL);
+
+				ResourceLocation itemID = BuiltInRegistries.ITEM.getKey(lightStack.getItem());
+				if (itemID != null)
+					parent.set(LightRegistry.LIGHT_SOURCE, itemID);
+				else
+					parent.remove(LightRegistry.LIGHT_SOURCE);
 			}
-		});
-
-		private final ItemStack headlight;
-
-		public InventoryProvider(ItemStack stack) {
-			this.headlight = stack;
-		}
-
-		@NotNull
-		@Override
-		public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-			if (cap == ForgeCapabilities.ITEM_HANDLER)
-				return inventory.cast();
-			else return LazyOptional.empty();
-		}
-
-		@Override
-		public CompoundTag serializeNBT() {
-			if (inventory.isPresent()) {
-				return inventory.resolve().get().serializeNBT();
-			}
-			return new CompoundTag();
-		}
-
-		@Override
-		public void deserializeNBT(CompoundTag nbt) {
-			inventory.ifPresent(h -> h.deserializeNBT(nbt));
 		}
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
-			private final LazyLoadedValue<HeadlightModel> model = new LazyLoadedValue<>(this::provideHeadlightModel);
+			private final LazyLoadedValue<HeadlightModel<?>> model = new LazyLoadedValue<>(this::provideHeadlightModel);
 
 			public HeadlightModel<?> provideHeadlightModel() {
 				return new HeadlightModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ClientHandler.HEADLIGHT));
@@ -165,7 +118,7 @@ public class HeadlightHelmetItem extends ArmorItem {
 	}
 
 	@Override
-	public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-		return HeadlightMod.modLoc("textures/models/armor/headlight.png").toString();
+	public @Nullable ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, Layer layer, boolean innerModel) {
+		return HeadlightMod.modLoc("textures/models/armor/headlight.png");
 	}
 }

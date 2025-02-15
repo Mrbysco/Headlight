@@ -7,11 +7,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
-
 
 public class HeadlightMenu extends AbstractContainerMenu {
 	private ItemStack heldStack;
@@ -39,7 +38,7 @@ public class HeadlightMenu extends AbstractContainerMenu {
 
 		this.heldStack = helmetStack;
 
-		IItemHandler itemHandler = helmetStack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+		IItemHandler itemHandler = heldStack.getCapability(Capabilities.ItemHandler.ITEM);
 		if (itemHandler != null) {
 			this.addSlot(new SlotItemHandler(itemHandler, 0, 80, 20));
 

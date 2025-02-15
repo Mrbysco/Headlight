@@ -3,8 +3,8 @@ package com.mrbysco.headlight.datagen.assets;
 import com.mrbysco.headlight.HeadlightMod;
 import com.mrbysco.headlight.registry.LightRegistry;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class LightItemModelsProvider extends ItemModelProvider {
 	public LightItemModelsProvider(PackOutput packOutput, ExistingFileHelper helper) {

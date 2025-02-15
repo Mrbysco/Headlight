@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class HeadlightScreen extends AbstractContainerScreen<HeadlightMenu> {
-	private final ResourceLocation TEXTURE = new ResourceLocation(HeadlightMod.MOD_ID, "textures/gui/container/headlight.png");
+	private final ResourceLocation TEXTURE = HeadlightMod.modLoc("textures/gui/container/headlight.png");
 
 	public HeadlightScreen(HeadlightMenu screenContainer, Inventory inv, Component titleIn) {
 		super(screenContainer, inv, titleIn);
@@ -20,7 +20,7 @@ public class HeadlightScreen extends AbstractContainerScreen<HeadlightMenu> {
 
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-		this.renderBackground(guiGraphics);
+		this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 		this.renderTooltip(guiGraphics, mouseX, mouseY);
 	}

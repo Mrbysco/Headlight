@@ -1,3 +1,3 @@
-// 1.20.1	2025-02-03T23:06:10.6628363	Tags for minecraft:item mod id headlight
-66797930684245039acc30a31dd6b233be065981 data/headlight/tags/items/headlight_helmets.json
-b485ca0ebed54deedb34cd57f84f593df5deae59 data/headlight/tags/items/lights.json
+// 1.21.1	2025-02-15T20:48:37.8498689	Tags for minecraft:item mod id headlight
+66797930684245039acc30a31dd6b233be065981 data/headlight/tags/item/headlight_helmets.json
+b485ca0ebed54deedb34cd57f84f593df5deae59 data/headlight/tags/item/lights.json

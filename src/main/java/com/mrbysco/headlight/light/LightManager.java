@@ -5,10 +5,10 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,16 +32,13 @@ public class LightManager {
 	public static int lastUpdateCount = 0;
 	private static final Map<Item, Integer> LIGHT_REGISTRY = new HashMap<>();
 
+	@SuppressWarnings("deprecation")
 	public static void init() {
-		var tags = ForgeRegistries.ITEMS.tags();
-		if (tags != null) {
-			var iTag = tags.getTag(HeadlightMod.LIGHTS);
-			iTag.forEach(item -> {
-				if (item instanceof BlockItem blockItem) {
-					register(item, blockItem.getBlock().defaultBlockState().getLightEmission());
-				}
-			});
-		}
+		BuiltInRegistries.ITEM.getTag(HeadlightMod.LIGHTS).ifPresent(tag -> tag.forEach(item -> {
+			if (item.value() instanceof BlockItem blockItem) {
+				register(blockItem, blockItem.getBlock().defaultBlockState().getLightEmission());
+			}
+		}));
 	}
 
 	public static <T extends Item> void register(Item item, Integer luminance) {
@@ -188,10 +185,8 @@ public class LightManager {
 	 * @param renderer the renderer
 	 */
 	public static void updateAll(LevelRenderer renderer) {
-		long now = System.currentTimeMillis();
 
-
-		lastUpdate = now;
+		lastUpdate = System.currentTimeMillis();
 		lastUpdateCount = 0;
 
 		lightSourcesLock.readLock().lock();

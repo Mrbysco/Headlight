@@ -1,8 +1,7 @@
 package com.mrbysco.headlight.light;
 
 import com.mrbysco.headlight.HeadlightMod;
-import com.mrbysco.headlight.Reference;
-import net.minecraft.nbt.CompoundTag;
+import com.mrbysco.headlight.registry.LightRegistry;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -22,9 +21,9 @@ public class DynamLightUtil {
 	public static boolean couldGiveLight(Entity entity) {
 		if (entity instanceof LivingEntity livingEntity) {
 			ItemStack headStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
-			CompoundTag nbt = headStack.getTag();
-			if (nbt != null && headStack.is(HeadlightMod.HEADLIGHT_HELMETS)) {
-				return nbt.getInt(Reference.LEVEL_TAG) > 0;
+			int level = headStack.getOrDefault(LightRegistry.LIGHT_LEVEL, 0);
+			if (headStack.is(HeadlightMod.HEADLIGHT_HELMETS)) {
+				return level > 0;
 			}
 		}
 		return false;
@@ -33,9 +32,9 @@ public class DynamLightUtil {
 	public static int lightForEntity(Entity entity) {
 		if (entity instanceof LivingEntity livingEntity) {
 			ItemStack headStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
-			CompoundTag nbt = headStack.getTag();
-			if (nbt != null && headStack.is(HeadlightMod.HEADLIGHT_HELMETS)) {
-				return nbt.getInt(Reference.LEVEL_TAG);
+			int level = headStack.getOrDefault(LightRegistry.LIGHT_LEVEL, 0);
+			if (headStack.is(HeadlightMod.HEADLIGHT_HELMETS)) {
+				return level;
 			}
 		}
 		return 0;

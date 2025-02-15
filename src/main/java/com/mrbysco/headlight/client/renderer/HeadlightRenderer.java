@@ -2,7 +2,7 @@ package com.mrbysco.headlight.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mrbysco.headlight.Reference;
+import com.mrbysco.headlight.HeadlightMod;
 import com.mrbysco.headlight.client.ClientHandler;
 import com.mrbysco.headlight.client.model.HeadlightModel;
 import com.mrbysco.headlight.registry.LightRegistry;
@@ -12,20 +12,20 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HeadlightRenderer {
-	private static final ConcurrentHashMap<String, ItemStack> stacks = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<ResourceLocation, ItemStack> stacks = new ConcurrentHashMap<>();
 	public static final HeadlightRenderer INSTANCE = new HeadlightRenderer();
-	private static final ResourceLocation TEXTURE = new ResourceLocation("headlight:textures/models/armor/headlight.png");
+	private static final ResourceLocation TEXTURE = HeadlightMod.modLoc("textures/models/armor/headlight.png");
 
 	private final ItemRenderer itemRenderer;
 	private final HeadlightModel<? extends LivingEntity> addonModel;
@@ -38,21 +38,19 @@ public class HeadlightRenderer {
 
 	@Nullable
 	public ItemStack getSourceItem(@NotNull ItemStack helmetStack) {
-		if (helmetStack.getTag() != null && helmetStack.getTag().contains(Reference.SOURCE_TAG)) {
-			String sourceId = helmetStack.getTag().getString(Reference.SOURCE_TAG);
-			if (!sourceId.isEmpty()) {
-				if (stacks.containsKey(sourceId)) {
-					return stacks.get(sourceId);
-				} else {
-					ResourceLocation sourceLocation = ResourceLocation.tryParse(sourceId);
-					if (sourceLocation != null) {
-						Item sourceItem = ForgeRegistries.ITEMS.getValue(sourceLocation);
-						if (sourceItem != null) {
-							ItemStack sourceStack = new ItemStack(sourceItem);
-							stacks.put(sourceId, sourceStack);
-							return sourceStack;
-						}
-					}
+		if (helmetStack.has(LightRegistry.LIGHT_SOURCE)) {
+			ResourceLocation sourceId = helmetStack.get(LightRegistry.LIGHT_SOURCE);
+			if (sourceId == null) {
+				return null;
+			}
+			if (stacks.containsKey(sourceId)) {
+				return stacks.get(sourceId);
+			} else {
+				Item sourceItem = BuiltInRegistries.ITEM.get(sourceId);
+				if (sourceItem != null) {
+					ItemStack sourceStack = new ItemStack(sourceItem);
+					stacks.put(sourceId, sourceStack);
+					return sourceStack;
 				}
 			}
 		}
@@ -71,8 +69,8 @@ public class HeadlightRenderer {
 			boolean isSourceHelmet = helmetStack.is(LightRegistry.HEADLIGHT.get());
 			if (!isSourceHelmet) {
 				VertexConsumer vertexconsumer = buffer.getBuffer(this.addonModel.renderType(TEXTURE));
-				this.addonModel.renderToBuffer(poseStack, vertexconsumer, 15728880, OverlayTexture.NO_OVERLAY,
-						1.0F, 1.0F, 1.0F, 1.0F);
+				this.addonModel.renderToBuffer(poseStack, vertexconsumer, 15728880,
+						OverlayTexture.NO_OVERLAY, -1);
 			}
 			poseStack.popPose();
 		} else {

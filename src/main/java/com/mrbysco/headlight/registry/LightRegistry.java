@@ -2,33 +2,60 @@ package com.mrbysco.headlight.registry;
 
 import com.mrbysco.headlight.HeadlightMod;
 import com.mrbysco.headlight.items.HeadlightHelmetItem;
+import com.mrbysco.headlight.items.HeadlightHelmetItem.LightInventory;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class LightRegistry {
-	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, HeadlightMod.MOD_ID);
-	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, HeadlightMod.MOD_ID);
+	public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, HeadlightMod.MOD_ID);
+	public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(HeadlightMod.MOD_ID);
+	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(HeadlightMod.MOD_ID);
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, HeadlightMod.MOD_ID);
 
-	public static final RegistryObject<Item> HEADLIGHT = ITEMS.register("headlight", () ->
+	public static final Supplier<DataComponentType<ItemContainerContents>> HEADLIGHT_CONTENTS = DATA_COMPONENT_TYPES.register("headlight_contents", () ->
+			DataComponentType.<ItemContainerContents>builder()
+					.persistent(ItemContainerContents.CODEC)
+					.networkSynchronized(ItemContainerContents.STREAM_CODEC)
+					.build());
+
+	public static final Supplier<DataComponentType<ResourceLocation>> LIGHT_SOURCE = DATA_COMPONENT_TYPES.register("source", () ->
+			DataComponentType.<ResourceLocation>builder()
+					.persistent(ResourceLocation.CODEC)
+					.networkSynchronized(ResourceLocation.STREAM_CODEC)
+					.build());
+
+	public static final Supplier<DataComponentType<Integer>> LIGHT_LEVEL = DATA_COMPONENT_TYPES.register("level", () ->
+			DataComponentType.<Integer>builder()
+					.persistent(ExtraCodecs.intRange(0, 15))
+					.networkSynchronized(ByteBufCodecs.VAR_INT)
+					.build());
+
+
+	public static final DeferredItem<HeadlightHelmetItem> HEADLIGHT = ITEMS.register("headlight", () ->
 			new HeadlightHelmetItem(ArmorMaterials.IRON, itemBuilder()));
 
 	private static Item.Properties itemBuilder() {
 		return new Item.Properties();
 	}
 
-	public static final RegistryObject<CreativeModeTab> HEADLIGHT_TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
+	public static final Supplier<CreativeModeTab> HEADLIGHT_TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
 			.icon(() -> new ItemStack(LightRegistry.HEADLIGHT.get()))
 			.withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
 			.title(Component.translatable("itemGroup.headlight"))
@@ -36,4 +63,10 @@ public class LightRegistry {
 				List<ItemStack> stacks = LightRegistry.ITEMS.getEntries().stream().map(reg -> new ItemStack(reg.get())).toList();
 				output.acceptAll(stacks);
 			}).build());
+
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		event.registerItem(Capabilities.ItemHandler.ITEM, (stack, context) ->
+						new LightInventory(stack),
+				LightRegistry.HEADLIGHT);
+	}
 }

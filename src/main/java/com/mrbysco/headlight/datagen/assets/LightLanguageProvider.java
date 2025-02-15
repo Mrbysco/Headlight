@@ -3,7 +3,7 @@ package com.mrbysco.headlight.datagen.assets;
 import com.mrbysco.headlight.HeadlightMod;
 import com.mrbysco.headlight.registry.LightRegistry;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class LightLanguageProvider extends LanguageProvider {
 	public LightLanguageProvider(PackOutput packOutput) {
