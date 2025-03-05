@@ -54,7 +54,7 @@ public class HeadlightHelmetItem extends ArmorItem {
 		IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 		if (handler != null && !playerIn.isShiftKeyDown()) {
 			playerIn.openMenu(this.getContainer(stack));
-			return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+			return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 		} else {
 			return super.use(level, playerIn, handIn);
 		}
