@@ -1,2 +1,1 @@
-* Fix crash with Ars Nouveau
-* Add support for Sodium/Embeddium Dynamic Lights
+* Add zh_cn translation by [Surbenii](https://github.com/Mrbysco/Headlight/pull/1)
