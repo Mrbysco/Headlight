@@ -20,7 +20,7 @@ public class DynamLightUtil {
 	}
 
 	public static boolean couldGiveLight(Entity entity) {
-		if (entity instanceof LivingEntity livingEntity) {
+		if (entity instanceof LivingEntity livingEntity && !livingEntity.isSpectator()) {
 			ItemStack headStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
 			CompoundTag nbt = headStack.getTag();
 			if (nbt != null && headStack.is(HeadlightMod.HEADLIGHT_HELMETS)) {
@@ -31,7 +31,7 @@ public class DynamLightUtil {
 	}
 
 	public static int lightForEntity(Entity entity) {
-		if (entity instanceof LivingEntity livingEntity) {
+		if (entity instanceof LivingEntity livingEntity && !livingEntity.isSpectator()) {
 			ItemStack headStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
 			CompoundTag nbt = headStack.getTag();
 			if (nbt != null && headStack.is(HeadlightMod.HEADLIGHT_HELMETS)) {
