@@ -1,1 +1,1 @@
-* Add zh_cn translation by [Surbenii](https://github.com/Mrbysco/Headlight/pull/1)
+* Fix headlights emitting light while the player is in spectator mode
