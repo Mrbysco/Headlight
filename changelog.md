@@ -1,1 +1,3 @@
-* Initial update to 1.21.1
+* Stop spectators from glowing
+* Add zh_cn translation
+* Return success when opening the headlight gui
