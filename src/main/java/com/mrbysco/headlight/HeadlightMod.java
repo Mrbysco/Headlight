@@ -40,6 +40,7 @@ public class HeadlightMod {
 		if (dist.isClient()) {
 			eventBus.addListener(ClientHandler::registerMenuScreens);
 			eventBus.addListener(ClientHandler::registerLayerDefinitions);
+			eventBus.addListener(ClientHandler::registerClientExtension);
 			NeoForge.EVENT_BUS.register(ClientEventHandler.class);
 		}
 	}
