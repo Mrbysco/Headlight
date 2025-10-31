@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -27,11 +26,9 @@ public class HeadlightRenderer {
 	public static final HeadlightRenderer INSTANCE = new HeadlightRenderer();
 	private static final ResourceLocation TEXTURE = HeadlightMod.modLoc("textures/models/armor/headlight.png");
 
-	private final ItemRenderer itemRenderer;
 	private final HeadlightModel<? extends LivingEntity> addonModel;
 
 	public HeadlightRenderer() {
-		this.itemRenderer = Minecraft.getInstance().getItemRenderer();
 		EntityModelSet entityModelSet = Minecraft.getInstance().getEntityModels();
 		this.addonModel = new HeadlightModel<>(entityModelSet.bakeLayer(ClientHandler.HEADLIGHT_ADDON), true);
 	}
