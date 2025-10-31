@@ -52,7 +52,7 @@ legacyForge {
     }
 
     mods {
-        headlight {
+        "${mod_id}" {
             sourceSet sourceSets.main
         }
     }
