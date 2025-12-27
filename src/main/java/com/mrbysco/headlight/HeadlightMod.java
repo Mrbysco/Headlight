@@ -1,7 +1,6 @@
 package com.mrbysco.headlight;
 
 import com.mojang.logging.LogUtils;
-import com.mrbysco.headlight.client.ClientEventHandler;
 import com.mrbysco.headlight.client.ClientHandler;
 import com.mrbysco.headlight.light.LightManager;
 import com.mrbysco.headlight.registry.LightMenus;
@@ -41,7 +40,6 @@ public class HeadlightMod {
 			eventBus.addListener(ClientHandler::registerMenuScreens);
 			eventBus.addListener(ClientHandler::registerLayerDefinitions);
 			eventBus.addListener(ClientHandler::registerClientExtension);
-			NeoForge.EVENT_BUS.register(ClientEventHandler.class);
 		}
 	}
 

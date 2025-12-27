@@ -4,31 +4,32 @@ import com.mrbysco.headlight.client.renderer.HeadlightRenderer;
 import com.mrbysco.headlight.light.LightManager;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 
+@EventBusSubscriber
 public class ClientEventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void renderWorldLastEvent(final RenderLevelStageEvent event) {
-		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS) {
-			LightManager.updateAll(event.getLevelRenderer());
-		}
+	public static void renderWorldLastEvent(final RenderLevelStageEvent.AfterTripwireBlocks event) {
+		LightManager.updateAll(event.getLevelRenderer());
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void renderLivingEvent(RenderLivingEvent.Pre<? extends LivingEntity, ? extends EntityModel<? extends LivingEntity>> event) {
-		LivingEntity livingEntity = event.getEntity();
-		EntityModel<? extends LivingEntity> entityModel = event.getRenderer().getModel();
-		if (entityModel instanceof HumanoidModel<? extends LivingEntity> humanoidModel) {
-			ItemStack headStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
+	public static void renderLivingEvent(RenderLivingEvent.Pre<? extends LivingEntity, ? extends LivingEntityRenderState, ? extends EntityModel<?>> event) {
+		LivingEntityRenderState livingEntity = event.getRenderState();
+		EntityModel<?> entityModel = event.getRenderer().getModel();
+		if (livingEntity instanceof HumanoidRenderState humanoidState && entityModel instanceof HumanoidModel<?> humanoidModel) {
+			ItemStack headStack = humanoidState.headEquipment;
 			if (!headStack.isEmpty()) {
-				HeadlightRenderer.INSTANCE.renderHeadlight(headStack, event.getPoseStack(), humanoidModel, event.getMultiBufferSource(), event.getPackedLight());
+				HeadlightRenderer.INSTANCE.renderHeadlight(headStack, event.getPoseStack(), humanoidModel, event.getSubmitNodeCollector());
 			}
 		}
 	}

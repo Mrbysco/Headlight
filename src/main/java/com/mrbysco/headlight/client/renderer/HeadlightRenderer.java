@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -54,7 +55,7 @@ public class HeadlightRenderer {
 		return null;
 	}
 
-	public void renderHeadlight(ItemStack helmetStack, PoseStack poseStack, HumanoidModel<? extends LivingEntity> humanoidModel, MultiBufferSource buffer, int packedLight) {
+	public void renderHeadlight(ItemStack helmetStack, PoseStack poseStack, HumanoidModel<?> humanoidModel, SubmitNodeCollector submitNodeCollector) {
 		ItemStack sourceStack = getSourceItem(helmetStack);
 		if (sourceStack != null) {
 			addonModel.setSourceStack(sourceStack);

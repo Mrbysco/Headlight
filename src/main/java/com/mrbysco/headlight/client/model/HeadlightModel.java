@@ -13,15 +13,15 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HeadlightModel<T extends LivingEntity> extends HumanoidModel<T> {
+public class HeadlightModel<S extends HumanoidRenderState> extends HumanoidModel<S> {
 	private final ModelPart helmet;
 	private final ModelPart addon;
 	private final boolean isAddon;
@@ -93,8 +93,8 @@ public class HeadlightModel<T extends LivingEntity> extends HumanoidModel<T> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, @NotNull VertexConsumer vertexConsumer,
-	                           int packedLight, int packedOverlay, int color) {
+	public void setupAnim(S renderState) {
+		super.setupAnim(renderState);
 		poseStack.pushPose();
 		poseStack.scale(1.15F, 1.15F, 1.15F);
 		if (!isAddon) {

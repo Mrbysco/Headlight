@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
@@ -48,8 +47,7 @@ public class LightRegistry {
 					.build());
 
 
-	public static final DeferredItem<HeadlightHelmetItem> HEADLIGHT = ITEMS.register("headlight", () ->
-			new HeadlightHelmetItem(ArmorMaterials.IRON, itemBuilder()));
+	public static final DeferredItem<HeadlightHelmetItem> HEADLIGHT = ITEMS.registerItem("headlight", HeadlightHelmetItem::new);
 
 	private static Item.Properties itemBuilder() {
 		return new Item.Properties();
@@ -65,7 +63,7 @@ public class LightRegistry {
 			}).build());
 
 	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-		event.registerItem(Capabilities.ItemHandler.ITEM, (stack, context) ->
+		event.registerItem(Capabilities.Item.ITEM, (stack, access) ->
 						new LightInventory(stack),
 				LightRegistry.HEADLIGHT);
 	}

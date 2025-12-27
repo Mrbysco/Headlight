@@ -34,7 +34,7 @@ public class LightManager {
 
 	@SuppressWarnings("deprecation")
 	public static void init() {
-		BuiltInRegistries.ITEM.getTag(HeadlightMod.LIGHTS).ifPresent(tag -> tag.forEach(item -> {
+		BuiltInRegistries.ITEM.get(HeadlightMod.LIGHTS).ifPresent(tag -> tag.forEach(item -> {
 			if (item.value() instanceof BlockItem blockItem) {
 				register(blockItem, blockItem.getBlock().defaultBlockState().getLightEmission());
 			}

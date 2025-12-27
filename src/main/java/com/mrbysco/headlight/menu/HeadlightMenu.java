@@ -8,8 +8,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 import org.jetbrains.annotations.NotNull;
 
 public class HeadlightMenu extends AbstractContainerMenu {
@@ -38,9 +40,12 @@ public class HeadlightMenu extends AbstractContainerMenu {
 
 		this.heldStack = helmetStack;
 
-		IItemHandler itemHandler = heldStack.getCapability(Capabilities.ItemHandler.ITEM);
+		ResourceHandler<ItemResource> handler = heldStack.getCapability(Capabilities.Item.ITEM, null);
+		if (!(handler instanceof ItemStacksResourceHandler itemHandler))
+			throw new IllegalStateException("Item handler invalid!");
+
 		if (itemHandler != null) {
-			this.addSlot(new SlotItemHandler(itemHandler, 0, 80, 20));
+			this.addSlot(new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, 80, 20));
 
 			//Player Inventory
 			int xPos = 8;
@@ -85,7 +90,7 @@ public class HeadlightMenu extends AbstractContainerMenu {
 				if (itemstack.getItem() instanceof HeadlightHelmetItem)
 					return ItemStack.EMPTY;
 
-				int containerSlots = slots.size() - player.getInventory().items.size();
+				int containerSlots = slots.size() - player.getInventory().getNonEquipmentItems().size();
 
 				if (index < containerSlots) {
 					if (!this.moveItemStackTo(itemstack1, containerSlots, slots.size(), true)) {

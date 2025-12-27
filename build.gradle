@@ -49,7 +49,7 @@ runs {
         programArgument '--nogui'
     }
 
-    data {
+    clientData {
         // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
         // workingDirectory project.file('run-data')
 
@@ -93,10 +93,10 @@ dependencies {
 
     localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
 
-    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
-    localRuntime "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+//    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+//    localRuntime "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 
-    compileOnly "curse.maven:dynamiclights-reforged-551736:6044477"
+//    compileOnly "curse.maven:dynamiclights-reforged-551736:6044477"
 }
 
 jar {
@@ -150,7 +150,7 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.changelogType = 'markdown'
 
 //        mainFile.addRequirement()
-        mainFile.addOptional("dynamiclights-reforged")
+//        mainFile.addOptional("dynamiclights-reforged")
     }
 }
 
@@ -167,7 +167,7 @@ if (System.getenv().MODRINTH_KEY) {
         loaders = ["neoforge"]
 
         dependencies {
-            optional.project "sodium-dynamic-lights"
+//            optional.project "sodium-dynamic-lights"
         }
     }
 }
