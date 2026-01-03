@@ -4,19 +4,15 @@ import com.mrbysco.headlight.HeadlightMod;
 import com.mrbysco.headlight.registry.LightRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ItemTagsProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
 public class LightItemTagsProvider extends ItemTagsProvider {
-	public LightItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,
-	                             TagsProvider<Block> blockTagProvider, ExistingFileHelper existingFileHelper) {
-		super(output, lookupProvider, blockTagProvider.contentsGetter(), HeadlightMod.MOD_ID, existingFileHelper);
+	public LightItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+		super(output, lookupProvider, HeadlightMod.MOD_ID);
 	}
 
 	@Override

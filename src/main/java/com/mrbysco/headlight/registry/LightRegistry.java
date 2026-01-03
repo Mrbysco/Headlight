@@ -7,11 +7,10 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -34,10 +33,10 @@ public class LightRegistry {
 					.networkSynchronized(ItemContainerContents.STREAM_CODEC)
 					.build());
 
-	public static final Supplier<DataComponentType<ResourceLocation>> LIGHT_SOURCE = DATA_COMPONENT_TYPES.register("source", () ->
-			DataComponentType.<ResourceLocation>builder()
-					.persistent(ResourceLocation.CODEC)
-					.networkSynchronized(ResourceLocation.STREAM_CODEC)
+	public static final Supplier<DataComponentType<Identifier>> LIGHT_SOURCE = DATA_COMPONENT_TYPES.register("source", () ->
+			DataComponentType.<Identifier>builder()
+					.persistent(Identifier.CODEC)
+					.networkSynchronized(Identifier.STREAM_CODEC)
 					.build());
 
 	public static final Supplier<DataComponentType<Integer>> LIGHT_LEVEL = DATA_COMPONENT_TYPES.register("level", () ->
@@ -48,10 +47,6 @@ public class LightRegistry {
 
 
 	public static final DeferredItem<HeadlightHelmetItem> HEADLIGHT = ITEMS.registerItem("headlight", HeadlightHelmetItem::new);
-
-	private static Item.Properties itemBuilder() {
-		return new Item.Properties();
-	}
 
 	public static final Supplier<CreativeModeTab> HEADLIGHT_TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
 			.icon(() -> new ItemStack(LightRegistry.HEADLIGHT.get()))
@@ -64,7 +59,7 @@ public class LightRegistry {
 
 	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
 		event.registerItem(Capabilities.Item.ITEM, (stack, access) ->
-						new LightInventory(stack),
+						new LightInventory(access, stack),
 				LightRegistry.HEADLIGHT);
 	}
 }

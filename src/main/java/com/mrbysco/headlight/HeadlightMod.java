@@ -1,15 +1,13 @@
 package com.mrbysco.headlight;
 
 import com.mojang.logging.LogUtils;
-import com.mrbysco.headlight.client.ClientHandler;
 import com.mrbysco.headlight.light.LightManager;
 import com.mrbysco.headlight.registry.LightMenus;
 import com.mrbysco.headlight.registry.LightRegistry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -25,7 +23,7 @@ public class HeadlightMod {
 	public static final TagKey<Item> LIGHTS = ItemTags.create(modLoc("lights"));
 	public static final TagKey<Item> HEADLIGHT_HELMETS = ItemTags.create(modLoc("headlight_helmets"));
 
-	public HeadlightMod(IEventBus eventBus, Dist dist) {
+	public HeadlightMod(IEventBus eventBus) {
 		eventBus.addListener(LightRegistry::registerCapabilities);
 
 		LightRegistry.DATA_COMPONENT_TYPES.register(eventBus);
@@ -35,12 +33,6 @@ public class HeadlightMod {
 		LightMenus.MENU_TYPES.register(eventBus);
 
 		NeoForge.EVENT_BUS.register(this);
-
-		if (dist.isClient()) {
-			eventBus.addListener(ClientHandler::registerMenuScreens);
-			eventBus.addListener(ClientHandler::registerLayerDefinitions);
-			eventBus.addListener(ClientHandler::registerClientExtension);
-		}
 	}
 
 	@SubscribeEvent
@@ -48,7 +40,7 @@ public class HeadlightMod {
 		LightManager.init();
 	}
 
-	public static ResourceLocation modLoc(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	public static Identifier modLoc(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 }

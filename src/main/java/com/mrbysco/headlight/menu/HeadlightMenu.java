@@ -9,10 +9,11 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
 import net.neoforged.neoforge.transfer.item.ItemResource;
-import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class HeadlightMenu extends AbstractContainerMenu {
 	private ItemStack heldStack;
@@ -32,6 +33,11 @@ public class HeadlightMenu extends AbstractContainerMenu {
 	}
 
 	public HeadlightMenu(int id, @NotNull Inventory playerInventory, @NotNull ItemStack helmetStack) {
+		this(id, playerInventory, helmetStack, ItemAccess.forStack(helmetStack).getCapability(Capabilities.Item.ITEM));
+	}
+
+	public HeadlightMenu(int id, @NotNull Inventory playerInventory, @NotNull ItemStack helmetStack,
+	                     @Nullable ResourceHandler<ItemResource> helmetInventory) {
 		super(LightMenus.HEADLIGHT.get(), id);
 		if (helmetStack.isEmpty()) {
 			playerInventory.player.closeContainer();
@@ -40,12 +46,8 @@ public class HeadlightMenu extends AbstractContainerMenu {
 
 		this.heldStack = helmetStack;
 
-		ResourceHandler<ItemResource> handler = heldStack.getCapability(Capabilities.Item.ITEM, null);
-		if (!(handler instanceof ItemStacksResourceHandler itemHandler))
-			throw new IllegalStateException("Item handler invalid!");
-
-		if (itemHandler != null) {
-			this.addSlot(new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, 80, 20));
+		if (helmetInventory instanceof HeadlightHelmetItem.LightInventory accessItemHandler) {
+			this.addSlot(new ResourceHandlerSlot(accessItemHandler, accessItemHandler.indexModifier(helmetStack), 0, 80, 20));
 
 			//Player Inventory
 			int xPos = 8;
@@ -80,40 +82,38 @@ public class HeadlightMenu extends AbstractContainerMenu {
 	public ItemStack quickMoveStack(@NotNull Player player, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
 
-		if (index <= 1) {
-			Slot slot = slots.get(index);
+		Slot slot = slots.get(index);
 
-			if (slot != null && slot.hasItem()) {
-				ItemStack itemstack1 = slot.getItem();
-				itemstack = itemstack1.copy();
+		if (slot != null && slot.hasItem()) {
+			ItemStack itemstack1 = slot.getItem();
+			itemstack = itemstack1.copy();
 
-				if (itemstack.getItem() instanceof HeadlightHelmetItem)
-					return ItemStack.EMPTY;
+			if (itemstack.getItem() instanceof HeadlightHelmetItem)
+				return ItemStack.EMPTY;
 
-				int containerSlots = slots.size() - player.getInventory().getNonEquipmentItems().size();
+			int containerSlots = slots.size() - player.getInventory().getNonEquipmentItems().size();
 
-				if (index < containerSlots) {
-					if (!this.moveItemStackTo(itemstack1, containerSlots, slots.size(), true)) {
-						return ItemStack.EMPTY;
-					}
-				} else if (!this.moveItemStackTo(itemstack1, 0, containerSlots, false)) {
+			if (index < containerSlots) {
+				if (!this.moveItemStackTo(itemstack1, containerSlots, slots.size(), true)) {
 					return ItemStack.EMPTY;
 				}
-
-				if (itemstack1.getCount() == 0) {
-					slot.set(ItemStack.EMPTY);
-				} else {
-					slot.setChanged();
-				}
-
-				if (itemstack1.getCount() == itemstack.getCount()) {
+			} else {
+				if (!this.moveItemStackTo(itemstack1, 0, containerSlots, false))
 					return ItemStack.EMPTY;
-				}
-
-				slot.onTake(player, itemstack1);
 			}
-		}
 
+			if (itemstack1.getCount() == 0) {
+				slot.set(ItemStack.EMPTY);
+			} else {
+				slot.setChanged();
+			}
+
+			if (itemstack1.getCount() == itemstack.getCount()) {
+				return ItemStack.EMPTY;
+			}
+
+			slot.onTake(player, itemstack1);
+		}
 		return itemstack;
 	}
 }
