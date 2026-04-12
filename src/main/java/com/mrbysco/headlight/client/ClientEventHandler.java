@@ -10,7 +10,7 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 public class ClientEventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void renderWorldLastEvent(final RenderLevelStageEvent.AfterTripwireBlocks event) {
+	public static void renderWorldLastEvent(final RenderLevelStageEvent.AfterTranslucentBlocks event) {
 		LightManager.updateAll(event.getLevelRenderer());
 	}
 }

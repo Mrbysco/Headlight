@@ -1,3 +1,5 @@
-// 1.21.11	2026-01-02T20:27:21.3560999	Headlight Recipes
+// 26.1.2	2026-04-12T21:41:02.9070466	Headlight Recipes
 2aff7c32367d3e8aaa24740b35272c36b33bdfd6 data/headlight/advancement/recipes/combat/headlight.json
-194fa5019482348d45a2e96fc55b8b2af048efdd data/headlight/recipe/headlight.json
+cb1ff7b4980220f9b7305871382f26e05c466b99 data/headlight/advancement/recipes/misc/upgrade_helmet.json
+63cf96dd4101cb8787acf6c2f4579e7a7bb3f3ee data/headlight/recipe/headlight.json
+88a764400164d145fab6199fba3b7c8446ca8e4f data/headlight/recipe/upgrade_helmet.json

@@ -153,7 +153,7 @@ public abstract class LightEntityMixin implements LambDynamicLight {
 
 			if (luminance > 0) {
 				var entityChunkPos = this.chunkPosition;
-				var chunkPos = new BlockPos.MutableBlockPos(entityChunkPos.x, DynamLightUtil.getSectionCoord(this.getEyeY()), entityChunkPos.z);
+				var chunkPos = new BlockPos.MutableBlockPos(entityChunkPos.x(), DynamLightUtil.getSectionCoord(this.getEyeY()), entityChunkPos.z());
 
 				LightManager.scheduleChunkRebuild(renderer, chunkPos);
 				LightManager.updateTrackedChunks(chunkPos, this.headlight$trackedLitChunkPos, newPos);

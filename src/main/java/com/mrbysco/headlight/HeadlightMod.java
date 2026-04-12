@@ -30,6 +30,7 @@ public class HeadlightMod {
 		LightRegistry.BLOCKS.register(eventBus);
 		LightRegistry.ITEMS.register(eventBus);
 		LightRegistry.CREATIVE_MODE_TABS.register(eventBus);
+		LightRegistry.RECIPE_SERIALIZERS.register(eventBus);
 		LightMenus.MENU_TYPES.register(eventBus);
 
 		NeoForge.EVENT_BUS.register(this);

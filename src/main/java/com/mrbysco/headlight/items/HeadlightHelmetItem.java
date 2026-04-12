@@ -32,7 +32,7 @@ import org.jspecify.annotations.NonNull;
 public class HeadlightHelmetItem extends Item {
 
 	public HeadlightHelmetItem(Properties properties) {
-		super(properties.humanoidArmor(ArmorMaterials.IRON, ArmorType.HELMET));
+		super(properties.humanoidArmor(ArmorMaterials.IRON, ArmorType.HELMET).component(LightRegistry.HEADLIGHT_CONTENTS, ItemContainerContents.EMPTY));
 	}
 
 	@NotNull

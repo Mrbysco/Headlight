@@ -17,5 +17,6 @@ public class LightLanguageProvider extends LanguageProvider {
 		addItem(LightRegistry.HEADLIGHT, "Headlight Helmet");
 
 		add("headlight.container.headlight", "Headlight Helmet");
+		add("tooltip.headlight", "May contain light");
 	}
 }

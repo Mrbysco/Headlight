@@ -20,23 +20,6 @@ public class HeadlightModel<S extends HumanoidRenderState> extends HumanoidModel
 		this.addon = this.getHead().getChild("addon");
 	}
 
-	private static MeshDefinition createArmorMesh() {
-		MeshDefinition meshdefinition = new MeshDefinition();
-		PartDefinition partdefinition = meshdefinition.getRoot();
-
-		partdefinition.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.ZERO);
-		partdefinition.addOrReplaceChild("hat", CubeListBuilder.create(), PartPose.ZERO);
-		partdefinition.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.ZERO);
-		partdefinition.addOrReplaceChild("right_arm", CubeListBuilder.create(), PartPose.ZERO);
-		partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create(), PartPose.ZERO);
-		partdefinition.addOrReplaceChild("right_leg", CubeListBuilder.create(), PartPose.ZERO);
-		partdefinition.addOrReplaceChild("left_leg", CubeListBuilder.create(), PartPose.ZERO);
-		partdefinition.addOrReplaceChild("right_foot", CubeListBuilder.create(), PartPose.ZERO);
-		partdefinition.addOrReplaceChild("left_foot", CubeListBuilder.create(), PartPose.ZERO);
-
-		return meshdefinition;
-	}
-
 	public static LayerDefinition createHeadlightLayer() {
 		MeshDefinition meshdefinition = createMesh(CubeDeformation.NONE, 0.0F);
 		PartDefinition partdefinition = meshdefinition.getRoot();

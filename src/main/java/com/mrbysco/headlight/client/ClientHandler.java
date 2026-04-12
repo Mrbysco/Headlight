@@ -2,6 +2,7 @@ package com.mrbysco.headlight.client;
 
 import com.google.common.reflect.TypeToken;
 import com.mrbysco.headlight.HeadlightMod;
+import com.mrbysco.headlight.client.extension.HeadlightExtension;
 import com.mrbysco.headlight.client.layer.HeadLightSourceLayer;
 import com.mrbysco.headlight.client.model.HeadlightModel;
 import com.mrbysco.headlight.client.renderer.HeadlightRenderer;
@@ -9,7 +10,6 @@ import com.mrbysco.headlight.client.screen.HeadlightScreen;
 import com.mrbysco.headlight.registry.LightMenus;
 import com.mrbysco.headlight.registry.LightRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
@@ -18,8 +18,6 @@ import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.resources.model.EquipmentClientInfo;
-import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,11 +27,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
-import net.neoforged.neoforge.common.util.Lazy;
-import org.jetbrains.annotations.NotNull;
 
 @EventBusSubscriber
 public class ClientHandler {
@@ -91,23 +86,6 @@ public class ClientHandler {
 
 	@SubscribeEvent
 	public static void registerClientExtension(RegisterClientExtensionsEvent event) {
-		event.registerItem(new IClientItemExtensions() {
-			private final Lazy<HeadlightModel<?>> model = Lazy.of(this::provideHeadlightModel);
-
-			public HeadlightModel<?> provideHeadlightModel() {
-				return new HeadlightModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ClientHandler.HEADLIGHT));
-			}
-
-			@NotNull
-			@Override
-			public Model<?> getHumanoidArmorModel(ItemStack itemStack, EquipmentClientInfo.LayerType layerType, Model original) {
-				return model.get();
-			}
-
-			@Override
-			public Identifier getArmorTexture(ItemStack stack, EquipmentClientInfo.LayerType type, EquipmentClientInfo.Layer layer, Identifier _default) {
-				return HeadlightMod.modLoc("textures/models/armor/headlight.png");
-			}
-		}, LightRegistry.HEADLIGHT.get());
+		event.registerItem(new HeadlightExtension(), LightRegistry.HEADLIGHT.get());
 	}
 }

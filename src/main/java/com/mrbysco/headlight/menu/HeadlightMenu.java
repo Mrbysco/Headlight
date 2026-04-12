@@ -2,6 +2,7 @@ package com.mrbysco.headlight.menu;
 
 import com.mrbysco.headlight.items.HeadlightHelmetItem;
 import com.mrbysco.headlight.registry.LightMenus;
+import com.mrbysco.headlight.registry.LightRegistry;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -24,9 +25,9 @@ public class HeadlightMenu extends AbstractContainerMenu {
 
 	public static ItemStack getHelmetInventory(@NotNull Inventory playerInventory) {
 		Player player = playerInventory.player;
-		if (player.getMainHandItem().getItem() instanceof HeadlightHelmetItem) {
+		if (player.getMainHandItem().has(LightRegistry.HEADLIGHT_CONTENTS)) {
 			return player.getMainHandItem();
-		} else if (player.getOffhandItem().getItem() instanceof HeadlightHelmetItem) {
+		} else if (player.getOffhandItem().has(LightRegistry.HEADLIGHT_CONTENTS)) {
 			return player.getOffhandItem();
 		}
 		return ItemStack.EMPTY;
@@ -48,22 +49,23 @@ public class HeadlightMenu extends AbstractContainerMenu {
 
 		if (helmetInventory instanceof HeadlightHelmetItem.LightInventory accessItemHandler) {
 			this.addSlot(new ResourceHandlerSlot(accessItemHandler, accessItemHandler.indexModifier(helmetStack), 0, 80, 20));
-
-			//Player Inventory
-			int xPos = 8;
-			int yPos = 54;
-
-			for (int y = 0; y < 3; ++y) {
-				for (int x = 0; x < 9; ++x) {
-					this.addSlot(new Slot(playerInventory, x + y * 9 + 9, xPos + x * 18, yPos + y * 18));
-				}
-			}
-
-			for (int x = 0; x < 9; ++x) {
-				this.addSlot(new Slot(playerInventory, x, xPos + x * 18, yPos + 58));
-			}
 		} else {
-			playerInventory.player.closeContainer();
+			HeadlightHelmetItem.LightInventory tempInv = new HeadlightHelmetItem.LightInventory(ItemAccess.forStack(heldStack), heldStack);
+			this.addSlot(new ResourceHandlerSlot(tempInv, tempInv.indexModifier(helmetStack), 0, 80, 20));
+		}
+
+		//Player Inventory
+		int xPos = 8;
+		int yPos = 54;
+
+		for (int y = 0; y < 3; ++y) {
+			for (int x = 0; x < 9; ++x) {
+				this.addSlot(new Slot(playerInventory, x + y * 9 + 9, xPos + x * 18, yPos + y * 18));
+			}
+		}
+
+		for (int x = 0; x < 9; ++x) {
+			this.addSlot(new Slot(playerInventory, x, xPos + x * 18, yPos + 58));
 		}
 	}
 
@@ -88,7 +90,7 @@ public class HeadlightMenu extends AbstractContainerMenu {
 			ItemStack itemstack1 = slot.getItem();
 			itemstack = itemstack1.copy();
 
-			if (itemstack.getItem() instanceof HeadlightHelmetItem)
+			if (itemstack.has(LightRegistry.HEADLIGHT_CONTENTS))
 				return ItemStack.EMPTY;
 
 			int containerSlots = slots.size() - player.getInventory().getNonEquipmentItems().size();

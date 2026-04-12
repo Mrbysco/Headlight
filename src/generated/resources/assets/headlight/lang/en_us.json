@@ -1,5 +1,6 @@
 {
   "headlight.container.headlight": "Headlight Helmet",
   "item.headlight.headlight": "Headlight Helmet",
-  "itemGroup.headlight": "Headlight"
+  "itemGroup.headlight": "Headlight",
+  "tooltip.headlight": "May contain light"
 }

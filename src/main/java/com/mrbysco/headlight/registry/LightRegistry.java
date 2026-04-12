@@ -3,6 +3,7 @@ package com.mrbysco.headlight.registry;
 import com.mrbysco.headlight.HeadlightMod;
 import com.mrbysco.headlight.items.HeadlightHelmetItem;
 import com.mrbysco.headlight.items.HeadlightHelmetItem.LightInventory;
+import com.mrbysco.headlight.recipe.UpgradeHelmetRecipe;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -13,8 +14,10 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -26,6 +29,9 @@ public class LightRegistry {
 	public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(HeadlightMod.MOD_ID);
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(HeadlightMod.MOD_ID);
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, HeadlightMod.MOD_ID);
+	public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, HeadlightMod.MOD_ID);
+
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<UpgradeHelmetRecipe>> UPGRADE_HELMET = RECIPE_SERIALIZERS.register("upgrade_helmet", () -> UpgradeHelmetRecipe.SERIALIZER);
 
 	public static final Supplier<DataComponentType<ItemContainerContents>> HEADLIGHT_CONTENTS = DATA_COMPONENT_TYPES.register("headlight_contents", () ->
 			DataComponentType.<ItemContainerContents>builder()

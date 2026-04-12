@@ -1,5 +1,7 @@
 package com.mrbysco.headlight.datagen.data;
 
+import com.mrbysco.headlight.HeadlightMod;
+import com.mrbysco.headlight.recipe.UpgradeHelmetRecipe;
 import com.mrbysco.headlight.registry.LightRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderLookup.Provider;
@@ -7,7 +9,9 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
@@ -31,6 +35,10 @@ public class LightRecipeProvider extends RecipeProvider {
 				.unlockedBy("has_leather", has(Tags.Items.LEATHERS))
 				.unlockedBy("has_iron", has(Tags.Items.INGOTS_IRON))
 				.save(output);
+
+		SpecialRecipeBuilder.special(() -> new UpgradeHelmetRecipe(Ingredient.of(Items.ITEM_FRAME)))
+				.unlockedBy("has_item", has(Items.ITEM_FRAME))
+				.save(output, HeadlightMod.modLoc("upgrade_helmet").toString());
 	}
 
 	public static class Runner extends RecipeProvider.Runner {

@@ -22,7 +22,7 @@ public class DynamLightUtil {
 		if (entity instanceof LivingEntity livingEntity && !livingEntity.isSpectator()) {
 			ItemStack headStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
 			int level = headStack.getOrDefault(LightRegistry.LIGHT_LEVEL, 0);
-			if (headStack.is(HeadlightMod.HEADLIGHT_HELMETS)) {
+			if (headStack.is(HeadlightMod.HEADLIGHT_HELMETS) || headStack.has(LightRegistry.HEADLIGHT_CONTENTS)) {
 				return level > 0;
 			}
 		}
@@ -33,7 +33,7 @@ public class DynamLightUtil {
 		if (entity instanceof LivingEntity livingEntity && !livingEntity.isSpectator()) {
 			ItemStack headStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
 			int level = headStack.getOrDefault(LightRegistry.LIGHT_LEVEL, 0);
-			if (headStack.is(HeadlightMod.HEADLIGHT_HELMETS)) {
+			if (headStack.is(HeadlightMod.HEADLIGHT_HELMETS) || headStack.has(LightRegistry.HEADLIGHT_CONTENTS)) {
 				return level;
 			}
 		}
