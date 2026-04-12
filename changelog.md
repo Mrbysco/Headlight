@@ -1,1 +1,2 @@
-* Initial update to 1.21.11 
+* Initial update to 26.1.2
+* Allow for converting other helmets to headlights using Helmet + Item frame in crafting grid
